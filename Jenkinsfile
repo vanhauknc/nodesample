@@ -1,28 +1,35 @@
 pipeline {
-    agent {label 'docker-pipe'}
+    agent none
     environment{
         DOCKERHUB_CREDENTIALS=credentials('docker-hub')
+        DOCKER_IMAGE = "vanhauknc/nodesample"
     }
     stages {
         stage('Clone stage') {
-            steps {
-                git 'https://github.com/vanhauknc/nodesample.git'
-            }
+                agent{
+                    docker {
+                        image: 'node:18-alpine'
+                    }
+                }
+                steps{
+                    sh "npm install"
+                }
+            
         }
         stage('Build stage') {
             steps {
-                sh 'docker build -t vanhauknc/nodesample:latest .' 
+                sh 'echo build' 
             }
         }
         stage('Login') {
             steps {
-				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+				sh 'echo LOGIN  '
 			}
         }
         stage('Push') {
 
 			steps {
-				sh 'docker push -t vanhauknc/nodesample:latest'
+				sh 'echo Push'
 			}
 		}
     }
