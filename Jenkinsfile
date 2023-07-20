@@ -1,27 +1,25 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('Clone stage') {
             steps {
-                echo "Building.."
-                sh '''
-                echo "doing build stuff.."
-                '''
+                git 'https://github.com/vanhauknc/nodesample.git'
             }
         }
-        stage('Test') {
+        stage('Build stage') {
             steps {
-                echo "Testing.."
-                sh '''
-                echo "doing test stuff.."
-                '''
+                // This step should not normally be used in your script. Consult the inline help for details.
+                withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
+                    sh 'docker build  -t vanhauknc/nodesample'
+                    sh 'docker push vanhauknc/nodesample'
+                }
             }
         }
-        stage('Deliver') {
+        stage('Deploy') {
             steps {
-                echo 'Deliver....'
+                echo 'Deploy....'
                 sh '''
-                echo "doing delivery stuff.."
+                echo "doing Deploy stuff.."
                 '''
             }
         }
