@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment{
+        DOCKERHUB_CREDENTIALS=credentials('docker-hub')
+    }
     stages {
         stage('Clone stage') {
             steps {
@@ -8,20 +11,19 @@ pipeline {
         }
         stage('Build stage') {
             steps {
-                // This step should not normally be used in your script. Consult the inline help for details.
-                withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
-                    sh 'docker build  -t vanhauknc/nodesample'
-                    sh 'docker push vanhauknc/nodesample'
-                }
+                sh 'docker build -t vanhauknc/nodesample:latest .' 
             }
         }
-        stage('Deploy') {
+        stage('Login') {
             steps {
-                echo 'Deploy....'
-                sh '''
-                echo "doing Deploy stuff.."
-                '''
-            }
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
         }
+        stage('Push') {
+
+			steps {
+				sh 'docker push -t vanhauknc/nodesample:latest'
+			}
+		}
     }
 }
