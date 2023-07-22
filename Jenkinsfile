@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Build'){
             steps{
-                docker images
+                echo 'build done'
             }
         }
     }
