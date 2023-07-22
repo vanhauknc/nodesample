@@ -1,37 +1,11 @@
 pipeline {
-    agent none
-    environment{
-        DOCKERHUB_CREDENTIALS=credentials('docker-hub')
-        DOCKER_IMAGE = "vanhauknc/nodesample"
-    }
+    agent { dockerfile true }
     stages {
-        stage('Clone stage') {
-                agent{
-                    docker {
-                        image 'node:18-alpine'
-                        args '-u 0:0'
-                    }
-                }
-                steps{
-                    sh "npm install"
-                }
-            
-        }
-        stage('Build stage') {
+        stage('Test') {
             steps {
-                sh 'echo build' 
+                sh 'node --version'
+                sh 'svn --version'
             }
         }
-        stage('Login') {
-            steps {
-				sh 'echo LOGIN  '
-			}
-        }
-        stage('Push') {
-
-			steps {
-				sh 'echo Push'
-			}
-		}
     }
 }
