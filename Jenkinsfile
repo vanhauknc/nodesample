@@ -1,12 +1,12 @@
 pipeline {
-    agent { dockerfile true }
+    agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub')
     }
     stages {
         stage('Clone') {
             steps {
-                sh 'node --version'
+                echo 'node --version'
             }
         }
         stage('Login docker'){
